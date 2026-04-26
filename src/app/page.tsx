@@ -74,13 +74,15 @@ export default function Dashboard() {
     }
   };
 
+  const proxyUrl = process.env.NEXT_PUBLIC_PROXY_URL || 'http://localhost:8080';
+
   const generateVirtualKey = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!session?.user?.id) return;
     
     setIsGenerating(true);
     try {
-      const res = await fetch('http://localhost:8080/api/keys/generate', {
+      const res = await fetch(`${proxyUrl}/api/keys/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -103,7 +105,7 @@ export default function Dashboard() {
     setCacheEnabled(newState);
     
     try {
-      await fetch('http://localhost:8080/api/settings/cache', {
+      await fetch(`${proxyUrl}/api/settings/cache`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

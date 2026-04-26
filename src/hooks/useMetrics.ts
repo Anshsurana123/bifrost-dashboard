@@ -28,7 +28,9 @@ export function useMetrics() {
 
   useEffect(() => {
     // In production, this points to wss://bifrost-proxy/ws/metrics
-    const ws = new WebSocket('ws://localhost:8080/ws/metrics');
+    const httpUrl = process.env.NEXT_PUBLIC_PROXY_URL || 'http://localhost:8080';
+    const wsUrl = httpUrl.replace(/^http/, 'ws') + '/ws/metrics';
+    const ws = new WebSocket(wsUrl);
 
     ws.onmessage = (event) => {
       try {
