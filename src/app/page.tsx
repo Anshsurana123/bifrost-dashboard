@@ -59,6 +59,21 @@ export default function Dashboard() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setAuthError('');
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}`
+        }
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      setAuthError(error.message);
+    }
+  };
+
   const generateVirtualKey = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!session?.user?.id) return;
@@ -145,6 +160,15 @@ export default function Dashboard() {
               {isLoginMode ? 'Authenticate' : 'Initialize Tenant'}
             </button>
           </form>
+
+          <div className="mt-6 border-t border-lumivelle-border pt-6">
+            <button 
+              onClick={handleGoogleLogin} 
+              className="w-full bg-white text-black font-bold uppercase tracking-widest p-3 rounded hover:bg-gray-200 transition-colors flex items-center justify-center gap-3"
+            >
+              Sign In with Google
+            </button>
+          </div>
 
           <div className="mt-6 text-center">
             <button onClick={() => setIsLoginMode(!isLoginMode)} className="text-gray-500 text-xs uppercase hover:text-lumivelle-accent transition-colors">
