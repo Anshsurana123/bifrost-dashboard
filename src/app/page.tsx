@@ -28,6 +28,7 @@ export default function Dashboard() {
   const [realKey, setRealKey] = useState('');
   const [generatedKey, setGeneratedKey] = useState<{ virtual_key: string, app_secret: string } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [savedKeys, setSavedKeys] = useState<any[]>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -41,6 +42,15 @@ export default function Dashboard() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (session?.user?.id && activeTab === 'VAULT') {
+      supabase.from('bifrost_keys').select('virtual_key, app_secret, created_at').eq('company_id', session.user.id)
+        .then(({ data }) => {
+          if (data) setSavedKeys(data);
+        });
+    }
+  }, [session, activeTab]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -277,6 +287,26 @@ export default function Dashboard() {
                        <button onClick={() => navigator.clipboard.writeText(generatedKey.app_secret)}><Copy className="w-4 h-4 text-gray-500 hover:text-white" /></button>
                      </div>
                    </div>
+                 </div>
+               </div>
+             )}
+
+             {savedKeys.length > 0 && (
+               <div className="mt-8 border-t border-lumivelle-border pt-8 relative z-10">
+                 <h3 className="text-gray-400 text-sm uppercase tracking-widest mb-4 flex items-center gap-2"><KeyRound className="w-4 h-4" /> Active Tenant Keys</h3>
+                 <div className="space-y-4 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                   {savedKeys.map((k: any, i: number) => (
+                     <div key={i} className="bg-lumivelle-bg border border-lumivelle-border p-4 rounded">
+                       <div className="flex justify-between items-center mb-2">
+                         <code className="text-xs text-lumivelle-accent">{k.virtual_key}</code>
+                         <button onClick={() => navigator.clipboard.writeText(k.virtual_key)}><Copy className="w-3 h-3 text-gray-500 hover:text-white" /></button>
+                       </div>
+                       <div className="flex justify-between items-center border-t border-lumivelle-border/50 pt-2">
+                         <code className="text-xs text-gray-500">{k.app_secret}</code>
+                         <button onClick={() => navigator.clipboard.writeText(k.app_secret)}><Copy className="w-3 h-3 text-gray-500 hover:text-white" /></button>
+                       </div>
+                     </div>
+                   ))}
                  </div>
                </div>
              )}
