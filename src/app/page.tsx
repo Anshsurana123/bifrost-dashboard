@@ -319,7 +319,7 @@ export default function Dashboard() {
               </div>
               <h2 className="text-sm text-gray-500 mb-2 uppercase tracking-widest relative z-10">Total Savings</h2>
               <div className="text-5xl font-light text-lumivelle-accent tracking-tighter relative z-10">
-                ${currentSavings.toFixed(3)}
+                ${currentSavings.toFixed(6)}
               </div>
               <div className="mt-4 flex items-center gap-2 text-xs relative z-10">
                 {cacheEnabled ? (
